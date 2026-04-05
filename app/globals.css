@@ -1,26 +1,88 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --font-mono: var(--font-dm-mono), ui-monospace, monospace;
+  --font-serif: var(--font-instrument-serif), Georgia, serif;
+
+  --color-bg:        #0f1014;
+  --color-fg:        #e8e4df;
+  --color-muted:     #888;
+  --color-dim:       #555;
+  --color-faint:     #333;
+  --color-border:    rgba(255, 255, 255, 0.05);
+  --color-surface:   rgba(255, 255, 255, 0.04);
+  --color-surface-2: rgba(255, 255, 255, 0.06);
+
+  --color-local: #b8c4a0;
+  --color-sc:    #f0a56c;
+  --color-fma:   #8fa8c8;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  height: 100%;
+  overflow: hidden;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #0f1014;
+  color: #e8e4df;
+  font-family: var(--font-dm-mono), ui-monospace, monospace;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Thin scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+input,
+textarea,
+button {
+  font-family: inherit;
+}
+
+input::placeholder {
+  color: #555;
+}
+
+/* Equalizer animation */
+@keyframes eq1 {
+  0%, 100% { height: 35%; }
+  50%       { height: 90%; }
+}
+@keyframes eq2 {
+  0%, 100% { height: 65%; }
+  50%       { height: 25%; }
+}
+@keyframes eq3 {
+  0%, 100% { height: 80%; }
+  50%       { height: 45%; }
+}
+
+/* View entrance */
+@keyframes slide-up {
+  from { transform: translateY(6px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.25s ease;
 }
