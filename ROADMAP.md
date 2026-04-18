@@ -23,8 +23,8 @@ Reproductor personal como sustituto de Spotify. Fuentes soportadas: archivos loc
 | Función | Estado |
 |---|---|
 | Cola implícita al reproducir una lista | ✅ |
-| Ver la cola (qué suena a continuación) | ⬜ |
-| Añadir canción a la cola desde cualquier vista | ⬜ |
+| Ver la cola (qué suena a continuación) | ✅ |
+| Añadir canción a la cola desde cualquier vista | ✅ |
 | Reordenar la cola | ⬜ |
 
 ### Organización de la biblioteca
@@ -34,8 +34,8 @@ Reproductor personal como sustituto de Spotify. Fuentes soportadas: archivos loc
 | Vista de inicio con estadísticas y recientes | ✅ |
 | Biblioteca — tab canciones (lista completa) | ✅ |
 | Biblioteca — tab álbumes (grid agrupado) | ✅ |
-| Vista de artista (todas sus canciones y álbumes) | ⬜ |
-| Vista de álbum (canciones del álbum, reproducible) | ⬜ |
+| Vista de artista (todas sus canciones y álbumes) | ✅ |
+| Vista de álbum (canciones del álbum, reproducible) | ✅ |
 | Canciones favoritas / me gusta | ⬜ |
 
 ### Playlists
@@ -43,11 +43,11 @@ Reproductor personal como sustituto de Spotify. Fuentes soportadas: archivos loc
 | Función | Estado |
 |---|---|
 | Ver y reproducir playlists | ✅ |
-| Crear playlist | ⬜ |
-| Añadir canciones a una playlist | ⬜ |
-| Eliminar canciones de una playlist | ⬜ |
-| Reordenar canciones en una playlist | ⬜ |
-| Renombrar / borrar playlist | ⬜ |
+| Crear playlist | ✅ |
+| Añadir canciones a una playlist | ✅ |
+| Eliminar canciones de una playlist | ✅ |
+| Reordenar canciones en una playlist (drag & drop) | ✅ |
+| Renombrar / borrar playlist | ✅ |
 
 ### Gestión de canciones
 

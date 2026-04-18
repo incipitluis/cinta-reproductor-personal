@@ -49,9 +49,21 @@ function VolumeIcon() {
   );
 }
 
+function QueueIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <line x1="3" y1="6"  x2="21" y2="6"  />
+      <line x1="3" y1="12" x2="21" y2="12" />
+      <line x1="3" y1="18" x2="15" y2="18" />
+    </svg>
+  );
+}
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function PlayerBar() {
+interface Props { showQueue: boolean; onToggleQueue: () => void }
+
+export default function PlayerBar({ showQueue, onToggleQueue }: Props) {
   const {
     currentTrack,
     isPlaying,
@@ -260,32 +272,29 @@ export default function PlayerBar() {
         </div>
       </div>
 
-      {/* Volume */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          width: '140px',
-          flexShrink: 0,
-          color: '#555',
-        }}
-      >
-        <VolumeIcon />
-        <div
-          onClick={handleVolume}
-          style={trackBarStyle}
-          aria-label="Volumen"
-        >
-          <div
-            style={{
-              width: `${volume}%`,
-              height: '100%',
-              background: '#555',
-              borderRadius: '2px',
-            }}
-          />
+      {/* Volume + queue toggle */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '130px', color: '#555' }}>
+          <VolumeIcon />
+          <div onClick={handleVolume} style={trackBarStyle} aria-label="Volumen">
+            <div style={{ width: `${volume}%`, height: '100%', background: '#555', borderRadius: '2px' }} />
+          </div>
         </div>
+
+        <button
+          onClick={onToggleQueue}
+          title="cola de reproducción"
+          style={{
+            ...btnStyle,
+            color: showQueue ? '#b8c4a0' : '#555',
+            padding: '6px',
+            borderRadius: '3px',
+            background: showQueue ? 'rgba(184,196,160,0.08)' : 'transparent',
+            transition: 'all 0.15s ease',
+          }}
+        >
+          <QueueIcon />
+        </button>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { PlayerProvider } from '@/components/PlayerContext';
 import Sidebar from '@/components/Sidebar';
 import PlayerBar from '@/components/PlayerBar';
+import QueuePanel from '@/components/QueuePanel';
 import HomeView from '@/components/views/HomeView';
 import PlaylistView from '@/components/views/PlaylistView';
 import LibraryView from '@/components/views/LibraryView';
@@ -15,6 +16,7 @@ export type View = 'home' | 'playlist' | 'library' | 'search' | 'upload';
 export default function MainPanel() {
     const [view, setView] = useState<View>('home');
     const [activePl, setActivePl] = useState<string | null>(null);
+    const [showQueue, setShowQueue] = useState(false);
 
     const handlePlaylist = (id: string) => {
         setActivePl(id);
@@ -56,8 +58,10 @@ export default function MainPanel() {
                     </main>
                 </div>
 
+                {showQueue && <QueuePanel onClose={() => setShowQueue(false)} />}
+
                 {/* Persistent player bar */}
-                <PlayerBar />
+                <PlayerBar showQueue={showQueue} onToggleQueue={() => setShowQueue((q) => !q)} />
             </div>
         </PlayerProvider>
     );

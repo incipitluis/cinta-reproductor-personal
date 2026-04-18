@@ -10,12 +10,15 @@ import { formatDuration } from '@/lib/utils';
 interface Stats { total: number; albums: number; artists: number }
 
 function TrackRow({ track, index, queue }: { track: Track; index: number; queue: Track[] }) {
-  const { playTrack, currentTrack, isPlaying } = usePlayer();
+  const { playTrack, currentTrack, isPlaying, addToQueue } = usePlayer();
+  const [hovered, setHovered] = useState(false);
   const active = currentTrack?.id === track.id;
 
   return (
     <div
       onClick={() => playTrack(track, queue, index)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -23,11 +26,9 @@ function TrackRow({ track, index, queue }: { track: Track; index: number; queue:
         padding: '7px 10px',
         borderRadius: '4px',
         cursor: 'pointer',
-        background: active ? 'rgba(255,255,255,0.05)' : 'transparent',
+        background: active ? 'rgba(255,255,255,0.05)' : hovered ? 'rgba(255,255,255,0.03)' : 'transparent',
         transition: 'background 0.15s ease',
       }}
-      onMouseEnter={(e) => { if (!active) (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.03)'; }}
-      onMouseLeave={(e) => { if (!active) (e.currentTarget as HTMLDivElement).style.background = 'transparent'; }}
     >
       <div style={{
         width: '32px', height: '32px', borderRadius: '3px',
@@ -50,6 +51,11 @@ function TrackRow({ track, index, queue }: { track: Track; index: number; queue:
       <span style={{ fontSize: '11px', color: '#444', flexShrink: 0, width: '36px', textAlign: 'right' }}>
         {formatDuration(track.duration)}
       </span>
+      <button
+        onClick={(e) => { e.stopPropagation(); addToQueue(track); }}
+        title="añadir a la cola"
+        style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', fontSize: '14px', lineHeight: 1, padding: '0 0 0 4px', flexShrink: 0, opacity: hovered ? 1 : 0, transition: 'opacity 0.1s ease' }}
+      >+</button>
     </div>
   );
 }

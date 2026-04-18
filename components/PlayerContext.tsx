@@ -50,6 +50,8 @@ interface PlayerContextType {
   prev: () => void;
   seekTo: (seconds: number) => void;
   setVolume: (vol: number) => void;
+  addToQueue: (track: Track) => void;
+  removeFromQueue: (index: number) => void;
 }
 
 const PlayerContext = createContext<PlayerContextType>({
@@ -66,6 +68,8 @@ const PlayerContext = createContext<PlayerContextType>({
   prev: () => {},
   seekTo: () => {},
   setVolume: () => {},
+  addToQueue: () => {},
+  removeFromQueue: () => {},
 });
 
 export function usePlayer() {
@@ -329,6 +333,15 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [currentTrack]);
 
+  const addToQueue = useCallback((track: Track) => {
+    setQueue((prev) => [...prev, track]);
+  }, []);
+
+  const removeFromQueue = useCallback((index: number) => {
+    setQueue((prev) => { const next = [...prev]; next.splice(index, 1); return next; });
+    setQueueIndex((i) => index < i ? i - 1 : i);
+  }, []);
+
   const setVolume = useCallback((vol: number) => {
     setVolumeState(vol);
     if (audioRef.current) {
@@ -355,6 +368,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         prev,
         seekTo,
         setVolume,
+        addToQueue,
+        removeFromQueue,
       }}
     >
       {children}

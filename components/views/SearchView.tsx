@@ -27,12 +27,13 @@ function SearchIcon() {
 }
 
 export default function SearchView() {
-  const { currentTrack, isPlaying, playTrack } = usePlayer();
+  const { currentTrack, isPlaying, playTrack, addToQueue } = usePlayer();
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<Filter>('all');
   const [results, setResults] = useState<Track[]>([]);
   const [loading, setLoading] = useState(false);
   const [recents, setRecents] = useState<Track[]>([]);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
 
   useEffect(() => {
@@ -161,29 +162,23 @@ export default function SearchView() {
             return (
               <div
                 key={track.id}
+                onMouseEnter={() => setHoveredId(track.id)}
+                onMouseLeave={() => setHoveredId(null)}
                 onClick={() => playTrack(track, recents, i)}
-                style={{
-                  display: 'grid', gridTemplateColumns: '1fr 1fr 60px 50px',
-                  gap: '12px', padding: '9px 8px', borderRadius: '4px',
-                  cursor: 'pointer', alignItems: 'center',
-                  background: active ? 'rgba(255,255,255,0.05)' : 'transparent',
-                  transition: 'background 0.15s ease',
-                }}
-                onMouseEnter={(e) => { if (!active) (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.03)'; }}
-                onMouseLeave={(e) => { if (!active) (e.currentTarget as HTMLDivElement).style.background = 'transparent'; }}
+                style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 60px 44px 24px', gap: '10px', padding: '9px 8px', borderRadius: '4px', cursor: 'pointer', alignItems: 'center', background: active ? 'rgba(255,255,255,0.05)' : 'transparent', transition: 'background 0.15s ease' }}
+                onMouseOver={(e) => { if (!active) (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.03)'; }}
+                onMouseOut={(e)  => { if (!active) (e.currentTarget as HTMLDivElement).style.background = active ? 'rgba(255,255,255,0.05)' : 'transparent'; }}
               >
                 <div>
                   <div style={{ fontSize: '12px', color: active ? '#e8e4df' : '#aaa', marginBottom: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    {active && <EqBars playing={isPlaying} />}
-                    {track.title}
+                    {active && <EqBars playing={isPlaying} />}{track.title}
                   </div>
                   <div style={{ fontSize: '10px', color: '#555' }}>{track.artist ?? '—'}</div>
                 </div>
-                <span style={{ fontSize: '11px', color: '#444', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {track.album ?? '—'}
-                </span>
+                <span style={{ fontSize: '11px', color: '#444', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{track.album ?? '—'}</span>
                 <SourceBadge source={track.source} />
                 <span style={{ fontSize: '11px', color: '#444', textAlign: 'right' }}>{formatDuration(track.duration)}</span>
+                <button onClick={(e) => { e.stopPropagation(); addToQueue(track); }} title="añadir a la cola" style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', fontSize: '14px', lineHeight: 1, padding: 0, opacity: hoveredId === track.id ? 1 : 0, transition: 'opacity 0.1s ease' }}>+</button>
               </div>
             );
           })}
@@ -193,29 +188,9 @@ export default function SearchView() {
       {results.length > 0 && (
         <div>
           {/* Header */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr 60px 50px',
-              gap: '12px',
-              padding: '0 8px 10px',
-              borderBottom: '1px solid rgba(255,255,255,0.05)',
-              marginBottom: '4px',
-            }}
-          >
-            {['título', 'álbum', 'fuente', 'dur.'].map((h, i) => (
-              <span
-                key={h}
-                style={{
-                  fontSize: '8px',
-                  color: '#444',
-                  letterSpacing: '0.1em',
-                  textTransform: 'uppercase',
-                  textAlign: i === 3 ? 'right' : 'left',
-                }}
-              >
-                {h}
-              </span>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 60px 44px 24px', gap: '10px', padding: '0 8px 10px', borderBottom: '1px solid rgba(255,255,255,0.05)', marginBottom: '4px' }}>
+            {['título', 'álbum', 'fuente', 'dur.', ''].map((h, i) => (
+              <span key={i} style={{ fontSize: '8px', color: '#444', letterSpacing: '0.1em', textTransform: 'uppercase', textAlign: i === 3 ? 'right' : 'left' }}>{h}</span>
             ))}
           </div>
 
@@ -224,51 +199,23 @@ export default function SearchView() {
             return (
               <div
                 key={track.id}
+                onMouseEnter={() => setHoveredId(track.id)}
+                onMouseLeave={() => setHoveredId(null)}
                 onClick={() => playTrack(track, results, i)}
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr 60px 50px',
-                  gap: '12px',
-                  padding: '9px 8px',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  background: active ? 'rgba(255,255,255,0.05)' : 'transparent',
-                  alignItems: 'center',
-                  transition: 'background 0.15s ease',
-                }}
-                onMouseEnter={(e) => {
-                  if (!active) (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.03)';
-                }}
-                onMouseLeave={(e) => {
-                  if (!active) (e.currentTarget as HTMLDivElement).style.background = 'transparent';
-                }}
+                style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 60px 44px 24px', gap: '10px', padding: '9px 8px', borderRadius: '4px', cursor: 'pointer', background: active ? 'rgba(255,255,255,0.05)' : 'transparent', alignItems: 'center', transition: 'background 0.15s ease' }}
+                onMouseOver={(e) => { if (!active) (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.03)'; }}
+                onMouseOut={(e)  => { if (!active) (e.currentTarget as HTMLDivElement).style.background = active ? 'rgba(255,255,255,0.05)' : 'transparent'; }}
               >
                 <div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: active ? '#e8e4df' : '#aaa',
-                      marginBottom: '2px',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                    }}
-                  >
-                    {active && <EqBars playing={isPlaying} />}
-                    {track.title}
+                  <div style={{ fontSize: '12px', color: active ? '#e8e4df' : '#aaa', marginBottom: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {active && <EqBars playing={isPlaying} />}{track.title}
                   </div>
                   <div style={{ fontSize: '10px', color: '#555' }}>{track.artist ?? '—'}</div>
                 </div>
-                <span style={{ fontSize: '11px', color: '#444', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {track.album ?? '—'}
-                </span>
+                <span style={{ fontSize: '11px', color: '#444', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{track.album ?? '—'}</span>
                 <SourceBadge source={track.source} />
-                <span style={{ fontSize: '11px', color: '#444', textAlign: 'right' }}>
-                  {formatDuration(track.duration)}
-                </span>
+                <span style={{ fontSize: '11px', color: '#444', textAlign: 'right' }}>{formatDuration(track.duration)}</span>
+                <button onClick={(e) => { e.stopPropagation(); addToQueue(track); }} title="añadir a la cola" style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', fontSize: '14px', lineHeight: 1, padding: 0, opacity: hoveredId === track.id ? 1 : 0, transition: 'opacity 0.1s ease' }}>+</button>
               </div>
             );
           })}
