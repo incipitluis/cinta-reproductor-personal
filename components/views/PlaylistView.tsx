@@ -189,7 +189,7 @@ export default function PlaylistView({ playlistId }: Props) {
   const tracks = items.map((i) => i.track);
 
   return (
-    <div className="animate-slide-up" style={{ padding: '28px 32px' }}>
+    <div className="animate-slide-up view-pad" style={{ padding: '28px 32px' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '24px' }}>
         <div>

@@ -100,12 +100,69 @@ export default function PlayerBar({ showQueue, onToggleQueue }: Props) {
   );
 
   return (
+    <>
+    {/* ── Mobile mini player ─────────────────────────────────────────────── */}
     <div
+      className="player-bar-mini"
+      style={{
+        position: 'fixed',
+        bottom: '56px',
+        left: 0,
+        right: 0,
+        height: '52px',
+        background: '#0f1014',
+        borderTop: '1px solid rgba(255,255,255,0.06)',
+        flexDirection: 'column',
+        zIndex: 39,
+        flexShrink: 0,
+      }}
+    >
+      {/* Progress line */}
+      <div style={{ height: '2px', background: 'rgba(255,255,255,0.06)', flexShrink: 0 }}>
+        <div style={{ width: `${progress * 100}%`, height: '100%', background: '#b8c4a0', transition: 'width 0.1s linear' }} />
+      </div>
+      {/* Row */}
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '12px', padding: '0 16px' }}>
+        <div style={{ width: '34px', height: '34px', borderRadius: '3px', overflow: 'hidden', flexShrink: 0 }}>
+          {currentTrack ? (
+            <AlbumCover title={currentTrack.title} style={{ width: '100%', height: '100%' }} />
+          ) : (
+            <div style={{ width: '34px', height: '34px', background: 'rgba(255,255,255,0.04)', borderRadius: '3px' }} />
+          )}
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: '12px', color: currentTrack ? '#e8e4df' : '#444', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            {currentTrack?.title ?? 'sin reproducción'}
+          </div>
+          {currentTrack && (
+            <div style={{ fontSize: '10px', color: '#555', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {currentTrack.artist ?? '—'}
+            </div>
+          )}
+        </div>
+        <button onClick={prev} style={{ ...btnStyle, padding: '8px' }} aria-label="Anterior">
+          <SkipIcon direction="prev" />
+        </button>
+        <button
+          onClick={togglePlay}
+          style={{ ...btnStyle, border: '1px solid rgba(255,255,255,0.18)', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e8e4df', padding: 0 }}
+          aria-label={isPlaying ? 'Pausar' : 'Reproducir'}
+        >
+          {isPlaying ? <PauseIcon /> : <PlayIcon />}
+        </button>
+        <button onClick={next} style={{ ...btnStyle, padding: '8px' }} aria-label="Siguiente">
+          <SkipIcon direction="next" />
+        </button>
+      </div>
+    </div>
+
+    {/* ── Desktop full player bar ────────────────────────────────────────── */}
+    <div
+      className="player-bar-full"
       style={{
         height: '72px',
         borderTop: '1px solid rgba(255,255,255,0.05)',
         background: '#0f1014',
-        display: 'flex',
         alignItems: 'center',
         padding: '0 20px',
         gap: '20px',
@@ -279,6 +336,7 @@ export default function PlayerBar({ showQueue, onToggleQueue }: Props) {
         </button>
       </div>
     </div>
+    </>
   );
 }
 

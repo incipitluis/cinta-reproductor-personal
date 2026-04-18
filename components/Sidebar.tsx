@@ -6,6 +6,7 @@ import type { Playlist } from '@/lib/types';
 import type { View } from '@/components/main-panel';
 
 interface Props {
+  className?: string;
   view: View;
   activePl: string | null;
   onNav: (view: View) => void;
@@ -26,7 +27,7 @@ const SOURCES = [
   { label: 'free music archive', color: '#8fa8c8' },
 ];
 
-export default function Sidebar({ view, activePl, onNav, onPlaylist, onPlaylistDeleted }: Props) {
+export default function Sidebar({ className, view, activePl, onNav, onPlaylist, onPlaylistDeleted }: Props) {
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [renaming, setRenaming] = useState<string | null>(null);
@@ -83,7 +84,7 @@ export default function Sidebar({ view, activePl, onNav, onPlaylist, onPlaylistD
   });
 
   return (
-    <aside style={{ width: '220px', flexShrink: 0, borderRight: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column', padding: '24px 0' }}>
+    <aside className={className} style={{ width: '220px', flexShrink: 0, borderRight: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column', padding: '24px 0' }}>
       {/* App name */}
       <div style={{ padding: '0 20px', marginBottom: '32px' }}>
         <h1 style={{ fontFamily: 'var(--font-instrument-serif), serif', fontSize: '26px', fontWeight: 400, color: '#e8e4df', letterSpacing: '-0.02em', lineHeight: 1 }}>

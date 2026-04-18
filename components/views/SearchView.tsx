@@ -84,7 +84,7 @@ export default function SearchView() {
   }, [query, filter, search]);
 
   return (
-    <div className="animate-slide-up" style={{ padding: '28px 32px' }}>
+    <div className="animate-slide-up view-pad" style={{ padding: '28px 32px' }}>
       {/* Search input */}
       <div
         style={{
@@ -162,6 +162,7 @@ export default function SearchView() {
             return (
               <div
                 key={track.id}
+                className="track-grid"
                 onMouseEnter={() => setHoveredId(track.id)}
                 onMouseLeave={() => setHoveredId(null)}
                 onClick={() => playTrack(track, recents, i)}
@@ -175,9 +176,9 @@ export default function SearchView() {
                   </div>
                   <div style={{ fontSize: '10px', color: '#555' }}>{track.artist ?? '—'}</div>
                 </div>
-                <span style={{ fontSize: '11px', color: '#444', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{track.album ?? '—'}</span>
+                <span className="track-grid-col-album" style={{ fontSize: '11px', color: '#444', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{track.album ?? '—'}</span>
                 <SourceBadge source={track.source} />
-                <span style={{ fontSize: '11px', color: '#444', textAlign: 'right' }}>{formatDuration(track.duration)}</span>
+                <span className="track-grid-col-dur" style={{ fontSize: '11px', color: '#444', textAlign: 'right' }}>{formatDuration(track.duration)}</span>
                 <button onClick={(e) => { e.stopPropagation(); addToQueue(track); }} title="añadir a la cola" style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', fontSize: '14px', lineHeight: 1, padding: 0, opacity: hoveredId === track.id ? 1 : 0, transition: 'opacity 0.1s ease' }}>+</button>
               </div>
             );
@@ -188,10 +189,12 @@ export default function SearchView() {
       {results.length > 0 && (
         <div>
           {/* Header */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 60px 44px 24px', gap: '10px', padding: '0 8px 10px', borderBottom: '1px solid rgba(255,255,255,0.05)', marginBottom: '4px' }}>
-            {['título', 'álbum', 'fuente', 'dur.', ''].map((h, i) => (
-              <span key={i} style={{ fontSize: '8px', color: '#444', letterSpacing: '0.1em', textTransform: 'uppercase', textAlign: i === 3 ? 'right' : 'left' }}>{h}</span>
-            ))}
+          <div className="track-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 60px 44px 24px', gap: '10px', padding: '0 8px 10px', borderBottom: '1px solid rgba(255,255,255,0.05)', marginBottom: '4px' }}>
+            <span style={{ fontSize: '8px', color: '#444', letterSpacing: '0.1em', textTransform: 'uppercase' }}>título</span>
+            <span className="track-grid-col-album" style={{ fontSize: '8px', color: '#444', letterSpacing: '0.1em', textTransform: 'uppercase' }}>álbum</span>
+            <span style={{ fontSize: '8px', color: '#444', letterSpacing: '0.1em', textTransform: 'uppercase' }}>fuente</span>
+            <span className="track-grid-col-dur" style={{ fontSize: '8px', color: '#444', letterSpacing: '0.1em', textTransform: 'uppercase', textAlign: 'right' }}>dur.</span>
+            <span />
           </div>
 
           {results.map((track, i) => {
@@ -199,6 +202,7 @@ export default function SearchView() {
             return (
               <div
                 key={track.id}
+                className="track-grid"
                 onMouseEnter={() => setHoveredId(track.id)}
                 onMouseLeave={() => setHoveredId(null)}
                 onClick={() => playTrack(track, results, i)}
@@ -212,9 +216,9 @@ export default function SearchView() {
                   </div>
                   <div style={{ fontSize: '10px', color: '#555' }}>{track.artist ?? '—'}</div>
                 </div>
-                <span style={{ fontSize: '11px', color: '#444', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{track.album ?? '—'}</span>
+                <span className="track-grid-col-album" style={{ fontSize: '11px', color: '#444', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{track.album ?? '—'}</span>
                 <SourceBadge source={track.source} />
-                <span style={{ fontSize: '11px', color: '#444', textAlign: 'right' }}>{formatDuration(track.duration)}</span>
+                <span className="track-grid-col-dur" style={{ fontSize: '11px', color: '#444', textAlign: 'right' }}>{formatDuration(track.duration)}</span>
                 <button onClick={(e) => { e.stopPropagation(); addToQueue(track); }} title="añadir a la cola" style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', fontSize: '14px', lineHeight: 1, padding: 0, opacity: hoveredId === track.id ? 1 : 0, transition: 'opacity 0.1s ease' }}>+</button>
               </div>
             );

@@ -99,7 +99,7 @@ export default function HomeView() {
   }, []);
 
   return (
-    <div className="animate-slide-up" style={{ padding: '28px 32px' }}>
+    <div className="animate-slide-up view-pad" style={{ padding: '28px 32px' }}>
       {stats && (
         <div style={{ display: 'flex', gap: '36px', marginBottom: '40px', paddingBottom: '28px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
           {([

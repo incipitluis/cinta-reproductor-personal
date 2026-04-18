@@ -410,7 +410,7 @@ export default function UploadView() {
   );
 
   return (
-    <div className="animate-slide-up" style={{ padding: '28px 32px' }}>
+    <div className="animate-slide-up view-pad" style={{ padding: '28px 32px' }}>
       <div style={{ display: 'flex', gap: '6px', marginBottom: '28px' }}>
         {tabBtn('archivo', 'archivo local')}
         {tabBtn('soundcloud', 'soundcloud')}

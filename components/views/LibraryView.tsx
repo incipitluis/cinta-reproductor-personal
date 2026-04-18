@@ -19,16 +19,19 @@ function TrackList({ tracks }: { tracks: Track[] }) {
 
   return (
     <div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 60px 44px 24px', gap: '10px', padding: '0 8px 10px', borderBottom: '1px solid rgba(255,255,255,0.05)', marginBottom: '4px' }}>
-        {['título', 'álbum', 'fuente', 'dur.', ''].map((h, i) => (
-          <span key={i} style={{ fontSize: '8px', color: '#444', letterSpacing: '0.1em', textTransform: 'uppercase', textAlign: i === 3 ? 'right' : 'left' }}>{h}</span>
-        ))}
+      <div className="track-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 60px 44px 24px', gap: '10px', padding: '0 8px 10px', borderBottom: '1px solid rgba(255,255,255,0.05)', marginBottom: '4px' }}>
+        <span style={{ fontSize: '8px', color: '#444', letterSpacing: '0.1em', textTransform: 'uppercase' }}>título</span>
+        <span className="track-grid-col-album" style={{ fontSize: '8px', color: '#444', letterSpacing: '0.1em', textTransform: 'uppercase' }}>álbum</span>
+        <span style={{ fontSize: '8px', color: '#444', letterSpacing: '0.1em', textTransform: 'uppercase' }}>fuente</span>
+        <span className="track-grid-col-dur" style={{ fontSize: '8px', color: '#444', letterSpacing: '0.1em', textTransform: 'uppercase', textAlign: 'right' }}>dur.</span>
+        <span />
       </div>
       {tracks.map((track, i) => {
         const active = currentTrack?.id === track.id;
         return (
           <div
             key={track.id}
+            className="track-grid"
             onMouseEnter={() => setHoveredId(track.id)}
             onMouseLeave={() => setHoveredId(null)}
             onClick={() => playTrack(track, tracks, i)}
@@ -42,9 +45,9 @@ function TrackList({ tracks }: { tracks: Track[] }) {
               </div>
               <div style={{ fontSize: '10px', color: '#555' }}>{track.artist ?? '—'}</div>
             </div>
-            <span style={{ fontSize: '11px', color: '#444', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{track.album ?? '—'}</span>
+            <span className="track-grid-col-album" style={{ fontSize: '11px', color: '#444', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{track.album ?? '—'}</span>
             <SourceBadge source={track.source} />
-            <span style={{ fontSize: '11px', color: '#444', textAlign: 'right' }}>{formatDuration(track.duration)}</span>
+            <span className="track-grid-col-dur" style={{ fontSize: '11px', color: '#444', textAlign: 'right' }}>{formatDuration(track.duration)}</span>
             <button
               onClick={(e) => { e.stopPropagation(); addToQueue(track); }}
               title="añadir a la cola"
@@ -206,7 +209,7 @@ function AlbumsTab({ onDrill }: { onDrill: (album: string, artist: string | null
   if (!albums.length && !loose) return <p style={{ fontSize: '12px', color: '#444', fontStyle: 'italic', fontFamily: 'var(--font-instrument-serif), serif' }}>no hay álbumes todavía</p>;
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '20px' }}>
+    <div className="albums-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '20px' }}>
       {albums.map((a) => (
         <div
           key={`${a.album}-${a.artist}`}
@@ -302,7 +305,7 @@ export default function LibraryView() {
   );
 
   return (
-    <div className="animate-slide-up" style={{ padding: '28px 32px' }}>
+    <div className="animate-slide-up view-pad" style={{ padding: '28px 32px' }}>
       {!drill && (
         <div style={{ display: 'flex', gap: '6px', marginBottom: '28px' }}>
           {tabBtn('canciones', 'canciones')}

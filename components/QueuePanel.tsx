@@ -27,7 +27,7 @@ export default function QueuePanel({ onClose }: Props) {
   };
 
   return (
-    <div style={{
+    <div className="queue-panel" style={{
       position: 'fixed',
       right: 0, top: 0, bottom: '72px',
       width: '272px',
