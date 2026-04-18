@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { usePlayer } from '@/components/PlayerContext';
+import AlbumCover from '@/components/AlbumCover';
 import SourceBadge from '@/components/SourceBadge';
 import EqBars from '@/components/EqBars';
 import type { Source, Track } from '@/lib/types';
@@ -134,8 +135,8 @@ function ArtistDetail({ name, onBack }: { name: string; onBack: () => void }) {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '16px', marginBottom: '8px' }}>
             {albums.map((a) => (
               <div key={a.album} style={{ cursor: 'default' }}>
-                <div style={{ width: '100%', aspectRatio: '1', background: 'linear-gradient(135deg, #1a1a20, #252530)', borderRadius: '4px', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.05)' }}>
-                  <span style={{ fontFamily: 'var(--font-instrument-serif), serif', fontSize: '28px', color: 'rgba(255,255,255,0.07)', fontStyle: 'italic' }}>{a.album.charAt(0)}</span>
+                <div style={{ width: '100%', aspectRatio: '1', borderRadius: '4px', marginBottom: '8px', overflow: 'hidden' }}>
+                  <AlbumCover title={a.album} style={{ width: '100%', height: '100%' }} />
                 </div>
                 <div style={{ fontSize: '11px', color: '#ccc', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{a.album}</div>
                 <div style={{ fontSize: '9px', color: '#555' }}>{a.release_year ?? ''}{a.release_year ? ' · ' : ''}{a.tracks.length} tema{a.tracks.length !== 1 ? 's' : ''}</div>
@@ -214,8 +215,8 @@ function AlbumsTab({ onDrill }: { onDrill: (album: string, artist: string | null
           onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)'; }}
           onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.transform = 'none'; }}
         >
-          <div style={{ width: '100%', aspectRatio: '1', background: 'linear-gradient(135deg, #1a1a20, #252530)', borderRadius: '4px', marginBottom: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.05)', position: 'relative', overflow: 'hidden' }}>
-            <span style={{ fontFamily: 'var(--font-instrument-serif), serif', fontSize: '32px', color: 'rgba(255,255,255,0.08)', fontStyle: 'italic' }}>{a.album.charAt(0)}</span>
+          <div style={{ width: '100%', aspectRatio: '1', borderRadius: '4px', marginBottom: '10px', position: 'relative', overflow: 'hidden' }}>
+            <AlbumCover title={a.album} style={{ width: '100%', height: '100%' }} />
             <div style={{ position: 'absolute', bottom: '8px', right: '8px' }}><SourceBadge source={a.source} /></div>
           </div>
           <div style={{ fontSize: '12px', color: '#ccc', marginBottom: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{a.album}</div>

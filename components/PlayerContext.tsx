@@ -52,6 +52,7 @@ interface PlayerContextType {
   setVolume: (vol: number) => void;
   addToQueue: (track: Track) => void;
   removeFromQueue: (index: number) => void;
+  reorderQueue: (from: number, to: number) => void;
 }
 
 const PlayerContext = createContext<PlayerContextType>({
@@ -70,6 +71,7 @@ const PlayerContext = createContext<PlayerContextType>({
   setVolume: () => {},
   addToQueue: () => {},
   removeFromQueue: () => {},
+  reorderQueue: () => {},
 });
 
 export function usePlayer() {
@@ -146,7 +148,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       setQueueIndex((i) => {
         const next = i + 1;
         if (next < q.length) {
-          // playTrack is called via the effect below
+          setPendingPlay(next);
           return next;
         }
         return i;
@@ -342,6 +344,21 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     setQueueIndex((i) => index < i ? i - 1 : i);
   }, []);
 
+  const reorderQueue = useCallback((from: number, to: number) => {
+    setQueue((prev) => {
+      const next = [...prev];
+      const [item] = next.splice(from, 1);
+      next.splice(to, 0, item);
+      return next;
+    });
+    setQueueIndex((i) => {
+      if (i === from) return to;
+      if (from < i && to >= i) return i - 1;
+      if (from > i && to <= i) return i + 1;
+      return i;
+    });
+  }, []);
+
   const setVolume = useCallback((vol: number) => {
     setVolumeState(vol);
     if (audioRef.current) {
@@ -370,6 +387,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         setVolume,
         addToQueue,
         removeFromQueue,
+        reorderQueue,
       }}
     >
       {children}

@@ -1,17 +1,30 @@
 'use client';
 
+import { useState } from 'react';
 import { usePlayer } from './PlayerContext';
+import AlbumCover from './AlbumCover';
 import SourceBadge from './SourceBadge';
 import EqBars from './EqBars';
 import { formatDuration } from '@/lib/utils';
+import type { Source } from '@/lib/types';
 
 interface Props { onClose: () => void }
 
 export default function QueuePanel({ onClose }: Props) {
-  const { queue, queueIndex, currentTrack, isPlaying, playTrack, removeFromQueue } = usePlayer();
+  const { queue, queueIndex, currentTrack, isPlaying, playTrack, removeFromQueue, reorderQueue } = usePlayer();
+  const [dragIdx, setDragIdx] = useState<number | null>(null);
+  const [dropIdx, setDropIdx] = useState<number | null>(null);
 
   const upNext  = queue.slice(queueIndex + 1);
   const isEmpty = !currentTrack && upNext.length === 0;
+
+  const handleDrop = (toUpNextIdx: number) => {
+    if (dragIdx !== null && dragIdx !== toUpNextIdx) {
+      reorderQueue(queueIndex + 1 + dragIdx, queueIndex + 1 + toUpNextIdx);
+    }
+    setDragIdx(null);
+    setDropIdx(null);
+  };
 
   return (
     <div style={{
@@ -41,8 +54,11 @@ export default function QueuePanel({ onClose }: Props) {
           <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
             <div style={{ fontSize: '8px', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#444', marginBottom: '10px' }}>reproduciendo ahora</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '3px', background: 'linear-gradient(135deg, #1a1a20, #252530)', border: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <EqBars playing={isPlaying} />
+              <div style={{ width: '36px', height: '36px', borderRadius: '3px', overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
+                <AlbumCover title={currentTrack.title} style={{ width: '100%', height: '100%' }} />
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <EqBars playing={isPlaying} />
+                </div>
               </div>
               <div style={{ flex: 1, overflow: 'hidden' }}>
                 <div style={{ fontSize: '12px', color: '#e8e4df', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{currentTrack.title}</div>
@@ -68,6 +84,13 @@ export default function QueuePanel({ onClose }: Props) {
                   position={i + 1}
                   onPlay={() => playTrack(track, queue, absIndex)}
                   onRemove={() => removeFromQueue(absIndex)}
+                  isDragging={dragIdx === i}
+                  isDropTarget={dropIdx === i}
+                  onDragStart={() => setDragIdx(i)}
+                  onDragOver={(e) => { e.preventDefault(); setDropIdx(i); }}
+                  onDragLeave={() => setDropIdx(null)}
+                  onDrop={() => handleDrop(i)}
+                  onDragEnd={() => { setDragIdx(null); setDropIdx(null); }}
                 />
               );
             })}
@@ -84,15 +107,45 @@ export default function QueuePanel({ onClose }: Props) {
   );
 }
 
-function QueueRow({ track, position, onPlay, onRemove }: { track: { title: string; artist?: string; duration?: number; source: import('@/lib/types').Source }; position: number; onPlay: () => void; onRemove: () => void }) {
+function QueueRow({
+  track, position, onPlay, onRemove,
+  isDragging, isDropTarget,
+  onDragStart, onDragOver, onDragLeave, onDrop, onDragEnd,
+}: {
+  track: { title: string; artist?: string; duration?: number; source: Source };
+  position: number;
+  onPlay: () => void;
+  onRemove: () => void;
+  isDragging: boolean;
+  isDropTarget: boolean;
+  onDragStart: () => void;
+  onDragOver: (e: React.DragEvent) => void;
+  onDragLeave: () => void;
+  onDrop: () => void;
+  onDragEnd: () => void;
+}) {
   return (
     <div
-      style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '7px 20px', cursor: 'pointer', transition: 'background 0.1s ease' }}
+      draggable
+      onDragStart={(e) => { e.dataTransfer.effectAllowed = 'move'; onDragStart(); }}
+      onDragOver={onDragOver}
+      onDragLeave={onDragLeave}
+      onDrop={(e) => { e.preventDefault(); onDrop(); }}
+      onDragEnd={onDragEnd}
+      style={{
+        display: 'flex', alignItems: 'center', gap: '10px',
+        padding: '7px 20px',
+        cursor: 'grab',
+        transition: 'background 0.1s ease',
+        borderTop: isDropTarget ? '2px solid rgba(184,196,160,0.35)' : '2px solid transparent',
+        opacity: isDragging ? 0.4 : 1,
+      }}
       onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.03)'; }}
       onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'transparent'; }}
       onClick={onPlay}
     >
-      <span style={{ fontSize: '9px', color: '#444', width: '16px', flexShrink: 0, textAlign: 'right' }}>{position}</span>
+      <span style={{ fontSize: '9px', color: '#333', width: '8px', flexShrink: 0, textAlign: 'center' }}>⠿</span>
+      <span style={{ fontSize: '9px', color: '#444', width: '14px', flexShrink: 0, textAlign: 'right' }}>{position}</span>
       <div style={{ flex: 1, overflow: 'hidden' }}>
         <div style={{ fontSize: '11px', color: '#aaa', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{track.title}</div>
         <div style={{ fontSize: '9px', color: '#555' }}>{track.artist ?? '—'}</div>

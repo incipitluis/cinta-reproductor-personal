@@ -2,6 +2,7 @@
 
 import { useCallback } from 'react';
 import { usePlayer } from './PlayerContext';
+import AlbumCover from './AlbumCover';
 import SourceBadge from './SourceBadge';
 import { formatTime, formatDuration } from '@/lib/utils';
 
@@ -121,33 +122,14 @@ export default function PlayerBar({ showQueue, onToggleQueue }: Props) {
           flexShrink: 0,
         }}
       >
-        {/* Cover placeholder */}
-        <div
-          style={{
-            width: '44px',
-            height: '44px',
-            borderRadius: '3px',
-            background: 'linear-gradient(135deg, #1a1a22, #22222e)',
-            border: '1px solid rgba(255,255,255,0.06)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-          }}
-        >
+        {/* Cover */}
+        <div style={{ width: '44px', height: '44px', borderRadius: '3px', overflow: 'hidden', flexShrink: 0 }}>
           {currentTrack ? (
-            <span
-              style={{
-                fontFamily: 'var(--font-instrument-serif), serif',
-                fontSize: '18px',
-                color: 'rgba(255,255,255,0.1)',
-                fontStyle: 'italic',
-              }}
-            >
-              {currentTrack.title.charAt(0)}
-            </span>
+            <AlbumCover title={currentTrack.title} style={{ width: '100%', height: '100%' }} />
           ) : (
-            <span style={{ fontSize: '16px', color: 'rgba(255,255,255,0.07)' }}>♫</span>
+            <div style={{ width: '44px', height: '44px', background: 'linear-gradient(135deg, #1a1a22, #22222e)', border: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ fontSize: '16px', color: 'rgba(255,255,255,0.07)' }}>♫</span>
+            </div>
           )}
         </div>
 
