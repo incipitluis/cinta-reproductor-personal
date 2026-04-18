@@ -11,6 +11,7 @@ export interface Track {
   source: Source;
   source_ref: string;
   created_at?: string;
+  last_played_at?: string;
 }
 
 export interface Playlist {

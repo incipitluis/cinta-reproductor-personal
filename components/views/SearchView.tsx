@@ -32,7 +32,18 @@ export default function SearchView() {
   const [filter, setFilter] = useState<Filter>('all');
   const [results, setResults] = useState<Track[]>([]);
   const [loading, setLoading] = useState(false);
+  const [recents, setRecents] = useState<Track[]>([]);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+  useEffect(() => {
+    createClient()
+      .from('tracks')
+      .select('*')
+      .not('last_played_at', 'is', null)
+      .order('last_played_at', { ascending: false })
+      .limit(8)
+      .then(({ data }) => setRecents(data ?? []));
+  }, []);
 
   const search = useCallback(
     (q: string, f: Filter) => {
@@ -147,10 +158,49 @@ export default function SearchView() {
         <p style={{ fontSize: '11px', color: '#444' }}>sin resultados</p>
       )}
 
-      {!query && (
+      {!query && recents.length === 0 && (
         <p style={{ fontSize: '12px', color: '#333', textAlign: 'center', paddingTop: '48px' }}>
           escribe para buscar en tu biblioteca
         </p>
+      )}
+
+      {!query && recents.length > 0 && (
+        <div>
+          <div style={{ fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#444', marginBottom: '12px' }}>
+            escuchado recientemente
+          </div>
+          {recents.map((track, i) => {
+            const active = currentTrack?.id === track.id;
+            return (
+              <div
+                key={track.id}
+                onClick={() => playTrack(track, recents, i)}
+                style={{
+                  display: 'grid', gridTemplateColumns: '1fr 1fr 60px 50px',
+                  gap: '12px', padding: '9px 8px', borderRadius: '4px',
+                  cursor: 'pointer', alignItems: 'center',
+                  background: active ? 'rgba(255,255,255,0.05)' : 'transparent',
+                  transition: 'background 0.15s ease',
+                }}
+                onMouseEnter={(e) => { if (!active) (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.03)'; }}
+                onMouseLeave={(e) => { if (!active) (e.currentTarget as HTMLDivElement).style.background = 'transparent'; }}
+              >
+                <div>
+                  <div style={{ fontSize: '12px', color: active ? '#e8e4df' : '#aaa', marginBottom: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {active && <EqBars playing={isPlaying} />}
+                    {track.title}
+                  </div>
+                  <div style={{ fontSize: '10px', color: '#555' }}>{track.artist ?? '—'}</div>
+                </div>
+                <span style={{ fontSize: '11px', color: '#444', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {track.album ?? '—'}
+                </span>
+                <SourceBadge source={track.source} />
+                <span style={{ fontSize: '11px', color: '#444', textAlign: 'right' }}>{formatDuration(track.duration)}</span>
+              </div>
+            );
+          })}
+        </div>
       )}
 
       {results.length > 0 && (

@@ -4,15 +4,16 @@ import { useState } from 'react';
 import { PlayerProvider } from '@/components/PlayerContext';
 import Sidebar from '@/components/Sidebar';
 import PlayerBar from '@/components/PlayerBar';
+import HomeView from '@/components/views/HomeView';
 import PlaylistView from '@/components/views/PlaylistView';
 import LibraryView from '@/components/views/LibraryView';
 import SearchView from '@/components/views/SearchView';
 import UploadView from '@/components/views/UploadView';
 
-type View = 'playlist' | 'library' | 'search' | 'upload';
+export type View = 'home' | 'playlist' | 'library' | 'search' | 'upload';
 
 export default function MainPanel() {
-    const [view, setView] = useState<View>('playlist');
+    const [view, setView] = useState<View>('home');
     const [activePl, setActivePl] = useState<string | null>(null);
 
     const handlePlaylist = (id: string) => {
@@ -42,10 +43,11 @@ export default function MainPanel() {
                     />
 
                     <main style={{ flex: 1, overflow: 'auto' }}>
+                        {view === 'home'     && <HomeView />}
                         {view === 'playlist' && <PlaylistView playlistId={activePl} />}
-                        {view === 'library' && <LibraryView />}
-                        {view === 'search' && <SearchView />}
-                        {view === 'upload' && <UploadView />}
+                        {view === 'library'  && <LibraryView />}
+                        {view === 'search'   && <SearchView />}
+                        {view === 'upload'   && <UploadView />}
                     </main>
                 </div>
 

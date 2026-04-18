@@ -10,8 +10,9 @@ CREATE TABLE IF NOT EXISTS tracks (
   duration    FLOAT,          -- seconds
   cover_url   TEXT,
   source      TEXT NOT NULL CHECK (source IN ('local', 'soundcloud', 'fma')),
-  source_ref  TEXT NOT NULL,  -- storage path (local), SC URL (soundcloud), MP3 URL (fma)
-  created_at  TIMESTAMPTZ DEFAULT NOW()
+  source_ref    TEXT NOT NULL,  -- storage path (local), SC URL (soundcloud), MP3 URL (fma)
+  created_at    TIMESTAMPTZ DEFAULT NOW(),
+  last_played_at TIMESTAMPTZ    -- updated on every play
 );
 
 CREATE TABLE IF NOT EXISTS playlists (

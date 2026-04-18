@@ -10,6 +10,7 @@ import {
 } from 'react';
 import type { Track } from '@/lib/types';
 import { getLocalTrackUrl } from '@/lib/utils';
+import { createClient } from '@/lib/supabase/client';
 
 // ─── SC Widget types ────────────────────────────────────────────────────────
 
@@ -249,6 +250,11 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
   const startTrack = useCallback((track: Track) => {
     setCurrentTrack(track);
+    createClient()
+      .from('tracks')
+      .update({ last_played_at: new Date().toISOString() })
+      .eq('id', track.id)
+      .then(() => {});
     if (track.source === 'soundcloud') {
       playSCTrack(track);
     } else {

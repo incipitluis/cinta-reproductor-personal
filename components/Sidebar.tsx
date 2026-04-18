@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { Playlist } from '@/lib/types';
-
-type View = 'playlist' | 'library' | 'search' | 'upload';
+import type { View } from '@/components/main-panel';
 
 interface Props {
   view: View;
@@ -14,10 +13,10 @@ interface Props {
 }
 
 const NAV: { id: View; label: string }[] = [
-  { id: 'playlist', label: 'listas' },
-  { id: 'library',  label: 'biblioteca' },
-  { id: 'search',   label: 'buscar' },
-  { id: 'upload',   label: 'subir' },
+  { id: 'home',    label: 'inicio' },
+  { id: 'library', label: 'biblioteca' },
+  { id: 'search',  label: 'buscar' },
+  { id: 'upload',  label: 'subir' },
 ];
 
 const SOURCES = [
