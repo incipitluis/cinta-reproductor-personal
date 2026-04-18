@@ -14,22 +14,22 @@ interface Props {
 }
 
 const NAV: { id: View; label: string }[] = [
-  { id: 'home',    label: 'inicio' },
+  { id: 'home', label: 'inicio' },
   { id: 'library', label: 'biblioteca' },
-  { id: 'search',  label: 'buscar' },
-  { id: 'upload',  label: 'subir' },
+  { id: 'search', label: 'buscar' },
+  { id: 'upload', label: 'subir' },
 ];
 
 const SOURCES = [
-  { label: 'archivos locales',    color: '#b8c4a0' },
-  { label: 'soundcloud',          color: '#f0a56c' },
-  { label: 'free music archive',  color: '#8fa8c8' },
+  { label: 'archivos locales', color: '#b8c4a0' },
+  { label: 'soundcloud', color: '#f0a56c' },
+  { label: 'free music archive', color: '#8fa8c8' },
 ];
 
 export default function Sidebar({ view, activePl, onNav, onPlaylist, onPlaylistDeleted }: Props) {
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
-  const [hoverId, setHoverId]     = useState<string | null>(null);
-  const [renaming, setRenaming]   = useState<string | null>(null);
+  const [hoverId, setHoverId] = useState<string | null>(null);
+  const [renaming, setRenaming] = useState<string | null>(null);
   const [renameVal, setRenameVal] = useState('');
   const renameRef = useRef<HTMLInputElement>(null);
 
@@ -89,9 +89,6 @@ export default function Sidebar({ view, activePl, onNav, onPlaylist, onPlaylistD
         <h1 style={{ fontFamily: 'var(--font-instrument-serif), serif', fontSize: '26px', fontWeight: 400, color: '#e8e4df', letterSpacing: '-0.02em', lineHeight: 1 }}>
           cinta
         </h1>
-        <div style={{ fontSize: '8px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#555', marginTop: '4px' }}>
-          reproductor personal
-        </div>
       </div>
 
       {/* Navigation */}

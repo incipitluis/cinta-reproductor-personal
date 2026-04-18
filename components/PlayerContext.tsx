@@ -21,6 +21,7 @@ interface SCWidget {
   setVolume(vol: number): void;
   load(url: string, options: Record<string, unknown>): void;
   bind(event: string, listener: (data?: Record<string, number>) => void): void;
+  unbind(event: string): void;
   getDuration(cb: (ms: number) => void): void;
 }
 
@@ -157,21 +158,18 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  // When queueIndex changes, play the corresponding track
+  // Always-current refs so effects never hold stale closures
   const queueRef = useRef<Track[]>([]);
   queueRef.current = queue;
+  const startTrackRef = useRef<(t: Track) => void>(() => {});
 
   const [pendingPlay, setPendingPlay] = useState<number | null>(null);
 
   useEffect(() => {
     if (pendingPlay === null) return;
     const track = queueRef.current[pendingPlay];
-    if (track) {
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      startTrack(track);
-    }
+    if (track) startTrackRef.current(track);
     setPendingPlay(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pendingPlay]);
 
   // ── Audio adapters ───────────────────────────────────────────────────────
@@ -218,39 +216,45 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
     await loadSCScript();
 
+    // Unbind previous widget to prevent ghost events from the old track
+    if (scWidgetRef.current && window.SC) {
+      const E = window.SC.Widget.Events;
+      scWidgetRef.current.unbind(E.READY);
+      scWidgetRef.current.unbind(E.PLAY);
+      scWidgetRef.current.unbind(E.PAUSE);
+      scWidgetRef.current.unbind(E.PLAY_PROGRESS);
+      scWidgetRef.current.unbind(E.FINISH);
+      scWidgetRef.current = null;
+    }
+
     const embedUrl =
       `https://w.soundcloud.com/player/?url=${encodeURIComponent(track.source_ref)}` +
       `&auto_play=false&show_artwork=false&buying=false&sharing=false&show_user=false`;
-
-    iframe.src = embedUrl;
 
     const handleLoad = () => {
       if (!window.SC || !iframe) return;
       const widget = window.SC.Widget(iframe);
       scWidgetRef.current = widget;
 
-      widget.bind(window.SC.Widget.Events.READY, () => {
+      // Bind PLAY/PAUSE/PROGRESS/FINISH BEFORE READY so no event is missed
+      // when READY fires synchronously and calls widget.play()
+      widget.bind(window.SC.Widget.Events.PLAY,          () => setIsPlaying(true));
+      widget.bind(window.SC.Widget.Events.PAUSE,         () => setIsPlaying(false));
+      widget.bind(window.SC.Widget.Events.PLAY_PROGRESS, (data) => {
+        if (data) setCurrentTime(data.currentPosition / 1000);
+      });
+      widget.bind(window.SC.Widget.Events.FINISH,        () => goNext());
+      widget.bind(window.SC.Widget.Events.READY,         () => {
+        widget.getDuration((ms) => setDuration(ms / 1000));
         widget.setVolume(volume);
         widget.play();
       });
-
-      widget.bind(window.SC.Widget.Events.PLAY, () => setIsPlaying(true));
-      widget.bind(window.SC.Widget.Events.PAUSE, () => setIsPlaying(false));
-
-      widget.bind(window.SC.Widget.Events.PLAY_PROGRESS, (data) => {
-        if (data) {
-          setCurrentTime(data.currentPosition / 1000);
-          if (!duration) {
-            widget.getDuration((ms) => setDuration(ms / 1000));
-          }
-        }
-      });
-
-      widget.bind(window.SC.Widget.Events.FINISH, () => goNext());
     };
 
+    // Register listener BEFORE setting src to avoid any race condition
     iframe.addEventListener('load', handleLoad, { once: true });
-  }, [pauseAudio, volume, duration, goNext]);
+    iframe.src = embedUrl;
+  }, [pauseAudio, volume, goNext]);
 
   // ── Main play function ───────────────────────────────────────────────────
 
@@ -267,6 +271,9 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       playAudioTrack(track);
     }
   }, [playSCTrack, playAudioTrack]);
+
+  // Keep ref current so the pendingPlay effect always calls the latest version
+  startTrackRef.current = startTrack;
 
   const playTrack = useCallback((
     track: Track,
