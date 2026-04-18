@@ -90,39 +90,29 @@ input::placeholder {
 /* ── Mobile (< 640px) ──────────────────────────────────────────────────────── */
 
 @media (max-width: 639px) {
-  /* Hide desktop sidebar */
-  .sidebar-desktop { display: none !important; }
-
-  /* Main area fills the screen; leave room for mini-player + bottom nav */
+  /* Main area: room for mini-player (52px) + bottom nav (56px) */
   .main-scroll { padding-bottom: 108px !important; }
 
-  /* View padding: tighter on mobile */
+  /* View padding: tighter on small screens */
   .view-pad { padding: 16px 16px !important; }
 
   /* Track grid: drop album and duration columns */
-  .track-grid          { grid-template-columns: 1fr 44px 24px !important; }
+  .track-grid                        { grid-template-columns: 1fr 44px 24px !important; }
   .track-grid-col-album,
-  .track-grid-col-dur  { display: none !important; }
-  /* Albums tab: 2-col grid instead of auto-fill */
-  .albums-grid         { grid-template-columns: repeat(2, 1fr) !important; }
+  .track-grid-col-dur                { display: none !important; }
 
-  /* PlayerBar mini mode */
-  .player-bar-full     { display: none !important; }
-  .player-bar-mini     { display: flex !important; }
+  /* Albums grid: 2 fixed columns */
+  .albums-grid                       { grid-template-columns: repeat(2, 1fr) !important; }
+
+  /* PlayerBar: hide full bar, show mini player */
+  .player-bar-full                   { display: none !important; }
+  .player-bar-mini                   { display: flex !important; }
 
   /* QueuePanel: full-screen overlay */
-  .queue-panel {
-    left: 0 !important;
-    top: 0 !important;
-    bottom: 0 !important;
-    width: 100% !important;
-  }
+  .queue-panel { left: 0 !important; top: 0 !important; bottom: 0 !important; width: 100% !important; }
 }
 
 @media (min-width: 640px) {
-  /* Mobile-only elements hidden on desktop */
-  .mobile-nav          { display: none !important; }
-  .player-bar-mini     { display: none !important; }
-  /* Desktop player-bar-full always visible */
-  .player-bar-full     { display: flex !important; }
+  /* Mini player only exists on mobile */
+  .player-bar-mini { display: none !important; }
 }

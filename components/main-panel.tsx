@@ -11,6 +11,7 @@ import LibraryView from '@/components/views/LibraryView';
 import SearchView from '@/components/views/SearchView';
 import UploadView from '@/components/views/UploadView';
 import MobileNav from '@/components/MobileNav';
+import { useIsMobile } from '@/lib/hooks/useIsMobile';
 
 export type View = 'home' | 'playlist' | 'library' | 'search' | 'upload';
 
@@ -18,6 +19,7 @@ export default function MainPanel() {
     const [view, setView] = useState<View>('home');
     const [activePl, setActivePl] = useState<string | null>(null);
     const [showQueue, setShowQueue] = useState(false);
+    const isMobile = useIsMobile();
 
     const handlePlaylist = (id: string) => {
         setActivePl(id);
@@ -27,6 +29,8 @@ export default function MainPanel() {
     const handlePlaylistDeleted = (id: string) => {
         if (activePl === id) { setActivePl(null); setView('home'); }
     };
+
+    const nav = (v: View) => setView(v);
 
     return (
         <PlayerProvider>
@@ -40,16 +44,17 @@ export default function MainPanel() {
                     color: '#e8e4df',
                 }}
             >
-                {/* Main area: sidebar + content */}
+                {/* Main area: sidebar (desktop) + content */}
                 <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-                    <Sidebar
-                        className="sidebar-desktop"
-                        view={view}
-                        activePl={activePl}
-                        onNav={(v) => setView(v)}
-                        onPlaylist={handlePlaylist}
-                        onPlaylistDeleted={handlePlaylistDeleted}
-                    />
+                    {!isMobile && (
+                        <Sidebar
+                            view={view}
+                            activePl={activePl}
+                            onNav={nav}
+                            onPlaylist={handlePlaylist}
+                            onPlaylistDeleted={handlePlaylistDeleted}
+                        />
+                    )}
 
                     <main className="main-scroll" style={{ flex: 1, overflow: 'auto' }}>
                         {view === 'home'     && <HomeView />}
@@ -62,11 +67,9 @@ export default function MainPanel() {
 
                 {showQueue && <QueuePanel onClose={() => setShowQueue(false)} />}
 
-                {/* Persistent player bar */}
                 <PlayerBar showQueue={showQueue} onToggleQueue={() => setShowQueue((q) => !q)} />
 
-                {/* Mobile bottom navigation */}
-                <MobileNav view={view} onNav={(v) => setView(v)} />
+                {isMobile && <MobileNav view={view} onNav={nav} />}
             </div>
         </PlayerProvider>
     );

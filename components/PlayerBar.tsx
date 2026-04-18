@@ -163,6 +163,7 @@ export default function PlayerBar({ showQueue, onToggleQueue }: Props) {
         height: '72px',
         borderTop: '1px solid rgba(255,255,255,0.05)',
         background: '#0f1014',
+        display: 'flex',
         alignItems: 'center',
         padding: '0 20px',
         gap: '20px',

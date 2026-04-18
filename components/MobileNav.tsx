@@ -56,7 +56,6 @@ interface Props {
 export default function MobileNav({ view, onNav }: Props) {
   return (
     <nav
-      className="mobile-nav"
       style={{
         position: 'fixed',
         bottom: 0,
