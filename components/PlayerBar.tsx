@@ -153,6 +153,14 @@ export default function PlayerBar({ showQueue, onToggleQueue }: Props) {
         <button onClick={next} style={{ ...btnStyle, padding: '8px' }} aria-label="Siguiente">
           <SkipIcon direction="next" />
         </button>
+        <button
+          onClick={onToggleQueue}
+          title="cola"
+          style={{ ...btnStyle, padding: '8px', color: showQueue ? '#b8c4a0' : '#444' }}
+          aria-label="Cola de reproducción"
+        >
+          <QueueIcon />
+        </button>
       </div>
     </div>
 
