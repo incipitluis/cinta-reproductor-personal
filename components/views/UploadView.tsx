@@ -411,9 +411,6 @@ export default function UploadView() {
 
   return (
     <div className="animate-slide-up" style={{ padding: '28px 32px' }}>
-      <h2 style={{ fontFamily: 'var(--font-instrument-serif), serif', fontSize: '36px', fontWeight: 400, color: '#e8e4df', letterSpacing: '-0.02em', marginBottom: '20px' }}>
-        añadir
-      </h2>
       <div style={{ display: 'flex', gap: '6px', marginBottom: '28px' }}>
         {tabBtn('archivo', 'archivo local')}
         {tabBtn('soundcloud', 'soundcloud')}

@@ -94,14 +94,6 @@ export default function HomeView() {
 
   return (
     <div className="animate-slide-up" style={{ padding: '28px 32px' }}>
-      <h2 style={{
-        fontFamily: 'var(--font-instrument-serif), serif',
-        fontSize: '36px', fontWeight: 400,
-        color: '#e8e4df', letterSpacing: '-0.02em', marginBottom: '28px',
-      }}>
-        inicio
-      </h2>
-
       {stats && (
         <div style={{ display: 'flex', gap: '36px', marginBottom: '40px', paddingBottom: '28px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
           {([

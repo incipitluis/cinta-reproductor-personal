@@ -84,19 +84,6 @@ export default function SearchView() {
 
   return (
     <div className="animate-slide-up" style={{ padding: '28px 32px' }}>
-      <h2
-        style={{
-          fontFamily: 'var(--font-instrument-serif), serif',
-          fontSize: '36px',
-          fontWeight: 400,
-          color: '#e8e4df',
-          letterSpacing: '-0.02em',
-          marginBottom: '24px',
-        }}
-      >
-        buscar
-      </h2>
-
       {/* Search input */}
       <div
         style={{

@@ -21,6 +21,10 @@ export default function MainPanel() {
         setView('playlist');
     };
 
+    const handlePlaylistDeleted = (id: string) => {
+        if (activePl === id) { setActivePl(null); setView('home'); }
+    };
+
     return (
         <PlayerProvider>
             <div
@@ -40,6 +44,7 @@ export default function MainPanel() {
                         activePl={activePl}
                         onNav={(v) => setView(v)}
                         onPlaylist={handlePlaylist}
+                        onPlaylistDeleted={handlePlaylistDeleted}
                     />
 
                     <main style={{ flex: 1, overflow: 'auto' }}>
