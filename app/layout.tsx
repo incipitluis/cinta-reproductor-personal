@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { DM_Mono, Instrument_Serif } from 'next/font/google';
 import './globals.css';
 
@@ -18,8 +18,20 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: 'cinta',
-  description: 'reproductor personal',
+  title: 'Cinta',
+  description: 'Reproductor personal',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    title: 'Cinta',
+    statusBarStyle: 'black-translucent',
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#0f1014',
+  width: 'device-width',
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -28,6 +40,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="es"
       className={`${dmMono.variable} ${instrumentSerif.variable} h-full`}
     >
+      <head>
+        <link rel="apple-touch-icon" href="/icon.svg" />
+      </head>
       <body className="h-full overflow-hidden">{children}</body>
     </html>
   );

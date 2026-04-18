@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#0f1014"/>
+  <!-- Cassette body -->
+  <rect x="80" y="160" width="352" height="220" rx="20" fill="none" stroke="#b8c4a0" stroke-width="14"/>
+  <!-- Left reel -->
+  <circle cx="182" cy="295" r="56" fill="none" stroke="#b8c4a0" stroke-width="10"/>
+  <circle cx="182" cy="295" r="18" fill="#b8c4a0" opacity="0.4"/>
+  <!-- Right reel -->
+  <circle cx="330" cy="295" r="56" fill="none" stroke="#b8c4a0" stroke-width="10"/>
+  <circle cx="330" cy="295" r="18" fill="#b8c4a0" opacity="0.4"/>
+  <!-- Tape window arc -->
+  <path d="M182 239 Q256 210 330 239" fill="none" stroke="#b8c4a0" stroke-width="10" stroke-linecap="round"/>
+  <!-- Label strip -->
+  <rect x="108" y="168" width="296" height="52" rx="6" fill="#b8c4a0" opacity="0.08"/>
+  <!-- Bottom notch -->
+  <rect x="218" y="356" width="76" height="18" rx="4" fill="#0f1014" stroke="#b8c4a0" stroke-width="8"/>
+</svg>

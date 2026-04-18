@@ -161,7 +161,10 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   // Always-current refs so effects never hold stale closures
   const queueRef = useRef<Track[]>([]);
   queueRef.current = queue;
-  const startTrackRef = useRef<(t: Track) => void>(() => {});
+  const startTrackRef   = useRef<(t: Track) => void>(() => {});
+  const nextRef         = useRef<() => void>(() => {});
+  const prevRef         = useRef<() => void>(() => {});
+  const togglePlayRef   = useRef<() => void>(() => {});
 
   const [pendingPlay, setPendingPlay] = useState<number | null>(null);
 
@@ -171,6 +174,20 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     if (track) startTrackRef.current(track);
     setPendingPlay(null);
   }, [pendingPlay]);
+
+  // Register Media Session action handlers once on mount (use refs so they're always current)
+  useEffect(() => {
+    if (!('mediaSession' in navigator)) return;
+    navigator.mediaSession.setActionHandler('play',          () => togglePlayRef.current());
+    navigator.mediaSession.setActionHandler('pause',         () => togglePlayRef.current());
+    navigator.mediaSession.setActionHandler('previoustrack', () => prevRef.current());
+    navigator.mediaSession.setActionHandler('nexttrack',     () => nextRef.current());
+    return () => {
+      (['play', 'pause', 'previoustrack', 'nexttrack'] as MediaSessionAction[]).forEach(
+        (a) => { try { navigator.mediaSession.setActionHandler(a, null); } catch {} }
+      );
+    };
+  }, []);
 
   // ── Audio adapters ───────────────────────────────────────────────────────
 
@@ -265,6 +282,18 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       .update({ last_played_at: new Date().toISOString() })
       .eq('id', track.id)
       .then(() => {});
+
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title:  track.title,
+        artist: track.artist ?? '',
+        album:  track.album  ?? '',
+        artwork: track.cover_url
+          ? [{ src: track.cover_url, sizes: '512x512', type: 'image/jpeg' }]
+          : [],
+      });
+    }
+
     if (track.source === 'soundcloud') {
       playSCTrack(track);
     } else {
@@ -272,7 +301,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [playSCTrack, playAudioTrack]);
 
-  // Keep ref current so the pendingPlay effect always calls the latest version
+  // Keep refs current so the one-time effects always call the latest versions
   startTrackRef.current = startTrack;
 
   const playTrack = useCallback((
@@ -342,6 +371,11 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [currentTrack]);
 
+  // Keep Media Session action refs current
+  togglePlayRef.current = togglePlay;
+  nextRef.current       = next;
+  prevRef.current       = prev;
+
   const addToQueue = useCallback((track: Track) => {
     setQueue((prev) => [...prev, track]);
   }, []);
@@ -375,6 +409,24 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       try { scWidgetRef.current.setVolume(vol); } catch {}
     }
   }, []);
+
+  // Sync playback state with Media Session (lock screen play/pause indicator)
+  useEffect(() => {
+    if (!('mediaSession' in navigator)) return;
+    navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
+  }, [isPlaying]);
+
+  // Sync seek position with Media Session (lock screen scrubber)
+  useEffect(() => {
+    if (!('mediaSession' in navigator) || !duration) return;
+    try {
+      navigator.mediaSession.setPositionState({
+        duration,
+        playbackRate: 1,
+        position: Math.min(currentTime, duration),
+      });
+    } catch {}
+  }, [currentTime, duration]);
 
   return (
     <PlayerContext.Provider

@@ -1,0 +1,18 @@
+{
+  "name": "Cinta",
+  "short_name": "Cinta",
+  "description": "Reproductor personal",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f1014",
+  "theme_color": "#0f1014",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
